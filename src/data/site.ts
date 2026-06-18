@@ -43,6 +43,7 @@ export const site = {
   logoDark: '/assets/img/Elad-logo-dark.svg',
   logoLight: '/assets/img/Elad-logo-light.png',
   logoWhite: '/assets/img/Elad-logo-white.svg',
+  logoName: '/assets/img/Elad-logo-name.svg', // swirl + "ELAD SHURATI" only (no tagline)
   heroImage: '/assets/img/-----------min-1.webp',
   phone: '052-7075029',
   phoneRaw: '0527075029',
