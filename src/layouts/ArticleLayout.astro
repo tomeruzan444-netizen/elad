@@ -36,7 +36,7 @@ const withSidebar = ['service', 'industry', 'post', 'blog-index'].includes(doc.g
   canonical={`https://elad-digital.co.il/${doc.slug}/`}
   ogTitle={doc.og_title}
   ogDescription={doc.og_description}
-  ogImage={doc.og_image_local || doc.og_image}
+  ogImage="/assets/img/og-default.png"
   ogType={doc.type === 'post' ? 'article' : 'website'}
   robots={doc.robots}
   jsonLd={jsonLd}

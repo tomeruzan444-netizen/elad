@@ -39,7 +39,7 @@ const canonicalUrl = canonical || new URL(Astro.url.pathname, site.domain).href;
 const desc = description || site.tagline;
 const img = ogImage
   ? (ogImage.startsWith('http') ? ogImage : new URL(ogImage, site.domain).href)
-  : new URL('/assets/img/-----------min-1.webp', site.domain).href;
+  : new URL('/assets/img/og-default.png', site.domain).href;
 ---
 <!doctype html>
 <html lang="he" dir="rtl">

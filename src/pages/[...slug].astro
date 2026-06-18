@@ -25,7 +25,7 @@ const jsonLd = buildJsonLd(doc);
     title={doc.title}
     description={doc.meta_description}
     canonical={`https://elad-digital.co.il/${doc.slug}/`}
-    ogImage={doc.og_image_local || doc.og_image}
+    ogImage="/assets/img/og-default.png"
     jsonLd={jsonLd}
   >
     <section class="page-hero">
