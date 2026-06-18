@@ -1,0 +1,42 @@
+---
+import type { Block } from '../data/site';
+export interface Props { blocks: Block[]; skipFirstH1?: boolean; }
+const { blocks, skipFirstH1 = true } = Astro.props;
+
+// Drop the page H1 (owned by the hero) and any leftover lorem-ipsum placeholder blocks.
+let h1seen = false;
+const clean = blocks.filter((b) => {
+  if (b.placeholder) return false;
+  if (skipFirstH1 && b.type === 'heading' && b.level === 1) {
+    if (!h1seen) { h1seen = true; return false; }
+    return false; // never render more than one H1
+  }
+  return true;
+});
+---
+<div class="prose">
+  {clean.map((b) => {
+    if (b.type === 'heading') {
+      const lvl = Math.min(Math.max(b.level || 2, 2), 4);
+      const Tag = `h${lvl}`;
+      return <Tag>{b.text}</Tag>;
+    }
+    if (b.type === 'para') return <p set:html={b.html || b.text} />;
+    if (b.type === 'list') {
+      return b.ordered
+        ? <ol>{b.items?.map((i) => <li>{i}</li>)}</ol>
+        : <ul>{b.items?.map((i) => <li>{i}</li>)}</ul>;
+    }
+    if (b.type === 'quote') return <blockquote>{b.text}</blockquote>;
+    if (b.type === 'image') return <img src={b.src} alt={b.alt || ''} loading="lazy" decoding="async" />;
+    if (b.type === 'table') return <div class="table-wrap" set:html={b.html} />;
+    return null;
+  })}
+</div>
+
+<style>
+  .table-wrap { overflow-x: auto; margin: 1.5rem 0; }
+  .table-wrap :global(table) { width: 100%; border-collapse: collapse; }
+  .table-wrap :global(td), .table-wrap :global(th) { border: 1px solid var(--border); padding: .7rem 1rem; text-align: start; }
+  .table-wrap :global(th) { background: var(--green-50); }
+</style>

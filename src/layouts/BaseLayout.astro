@@ -1,0 +1,91 @@
+---
+import '../styles/global.css';
+import Header from '../components/Header.astro';
+import Footer from '../components/Footer.astro';
+import FloatingWhatsApp from '../components/FloatingWhatsApp.astro';
+import { site } from '../data/site';
+
+export interface Props {
+  title: string;
+  description?: string | null;
+  canonical?: string | null;
+  ogTitle?: string | null;
+  ogDescription?: string | null;
+  ogImage?: string | null;
+  ogType?: string;
+  robots?: string | null;
+  jsonLd?: object[] | null;
+  bodyClass?: string;
+}
+
+const {
+  title,
+  description,
+  canonical,
+  ogTitle,
+  ogDescription,
+  ogImage,
+  ogType = 'website',
+  robots,
+  jsonLd = null,
+  bodyClass = '',
+} = Astro.props;
+
+// Staging guard: when PUBLIC_NOINDEX=true (temp domain), force noindex on every page.
+const NOINDEX = import.meta.env.PUBLIC_NOINDEX === 'true';
+const robotsContent = NOINDEX ? 'noindex, nofollow' : robots;
+
+const canonicalUrl = canonical || new URL(Astro.url.pathname, site.domain).href;
+const desc = description || site.tagline;
+const img = ogImage
+  ? (ogImage.startsWith('http') ? ogImage : new URL(ogImage, site.domain).href)
+  : new URL('/assets/img/-----------min-1.webp', site.domain).href;
+---
+<!doctype html>
+<html lang="he" dir="rtl">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>{title}</title>
+    <meta name="description" content={desc} />
+    <link rel="canonical" href={canonicalUrl} />
+    {robotsContent && <meta name="robots" content={robotsContent} />}
+
+    <!-- Open Graph -->
+    <meta property="og:locale" content="he_IL" />
+    <meta property="og:type" content={ogType} />
+    <meta property="og:title" content={ogTitle || title} />
+    <meta property="og:description" content={ogDescription || desc} />
+    <meta property="og:url" content={canonicalUrl} />
+    <meta property="og:site_name" content={site.name} />
+    <meta property="og:image" content={img} />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content={ogTitle || title} />
+    <meta name="twitter:description" content={ogDescription || desc} />
+    <meta name="twitter:image" content={img} />
+
+    <meta name="theme-color" content="#39b54a" />
+    <link rel="icon" type="image/svg+xml" href="/assets/img/Elad-logo-dark.svg" />
+
+    <!-- Fonts: Assistant (Hebrew) -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      rel="stylesheet"
+      href="https://fonts.googleapis.com/css2?family=Assistant:wght@400;500;600;700;800&display=swap"
+    />
+
+    {jsonLd && jsonLd.map((obj) => (
+      <script type="application/ld+json" set:html={JSON.stringify(obj)} />
+    ))}
+  </head>
+  <body class={bodyClass}>
+    <a href="#main" class="skip-link">דלג לתוכן הראשי</a>
+    <Header />
+    <main id="main">
+      <slot />
+    </main>
+    <Footer />
+    <FloatingWhatsApp />
+  </body>
+</html>

@@ -1,0 +1,116 @@
+---
+import { site } from '../data/site';
+// To enable real email delivery: create a free key at https://web3forms.com
+// and set it here (or via PUBLIC_WEB3FORMS_KEY). Empty = WhatsApp fallback only.
+const WEB3FORMS_KEY = import.meta.env.PUBLIC_WEB3FORMS_KEY || '';
+---
+<div class="contact-wrap">
+  <form class="contact-form" id="contact-form" data-wa={site.whatsapp} data-key={WEB3FORMS_KEY}>
+    {WEB3FORMS_KEY && <input type="hidden" name="access_key" value={WEB3FORMS_KEY} />}
+    <input type="hidden" name="subject" value="פנייה חדשה מהאתר — elad-digital.co.il" />
+    <input type="checkbox" name="botcheck" class="visually-hidden" tabindex="-1" autocomplete="off" />
+
+    <div class="field">
+      <label for="cf-name">שם מלא</label>
+      <input id="cf-name" name="name" type="text" required autocomplete="name" placeholder="איך קוראים לך?" />
+    </div>
+    <div class="field-row">
+      <div class="field">
+        <label for="cf-phone">טלפון</label>
+        <input id="cf-phone" name="phone" type="tel" required autocomplete="tel" inputmode="tel" placeholder="050-0000000" />
+      </div>
+      <div class="field">
+        <label for="cf-email">אימייל</label>
+        <input id="cf-email" name="email" type="email" autocomplete="email" placeholder="name@email.com" />
+      </div>
+    </div>
+    <div class="field">
+      <label for="cf-msg">איך אפשר לעזור?</label>
+      <textarea id="cf-msg" name="message" rows="4" placeholder="ספרו לי קצת על העסק ועל מה שאתם מחפשים"></textarea>
+    </div>
+    <button type="submit" class="btn btn-primary btn-lg" style="width:100%;justify-content:center">
+      <span class="btn-label">שליחה ואשמח לחזור אליכם</span>
+    </button>
+    <p class="form-note" id="form-note" role="status" aria-live="polite"></p>
+  </form>
+
+  <div class="contact-aside">
+    <h3>אפשר גם ישירות</h3>
+    <a href={`tel:${site.phoneRaw}`} class="contact-item">
+      <span class="ci-icon">📞</span><span><strong>טלפון</strong><br>{site.phone}</span>
+    </a>
+    <a href={site.whatsapp} target="_blank" rel="noopener" class="contact-item">
+      <span class="ci-icon">💬</span><span><strong>וואטסאפ</strong><br>שליחת הודעה מהירה</span>
+    </a>
+    <a href={`mailto:${site.email}`} class="contact-item">
+      <span class="ci-icon">✉️</span><span><strong>אימייל</strong><br>{site.email}</span>
+    </a>
+    <div class="contact-social">
+      <a href={site.social.facebook} target="_blank" rel="noopener">פייסבוק</a>
+      <a href={site.social.instagram} target="_blank" rel="noopener">אינסטגרם</a>
+    </div>
+  </div>
+</div>
+
+<style>
+  .contact-wrap { display: grid; grid-template-columns: 1.5fr 1fr; gap: 2rem; align-items: start; }
+  @media (max-width: 820px) { .contact-wrap { grid-template-columns: 1fr; } }
+  .contact-form { background: #fff; border: 1px solid var(--border); border-radius: var(--radius); padding: 1.8rem; box-shadow: var(--shadow-sm); }
+  .field { margin-bottom: 1.1rem; }
+  .field-row { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
+  @media (max-width: 480px) { .field-row { grid-template-columns: 1fr; } }
+  label { display: block; font-weight: 600; margin-bottom: .4rem; font-size: .95rem; color: var(--ink); }
+  input, textarea { width: 100%; padding: .8rem 1rem; border: 1px solid var(--border); border-radius: var(--radius-sm); font-family: inherit; font-size: 1rem; background: var(--slate-50); transition: border-color var(--transition), box-shadow var(--transition); }
+  input:focus, textarea:focus { border-color: var(--green-400); background: #fff; outline: none; box-shadow: var(--ring); }
+  .form-note { margin: 1rem 0 0; font-weight: 600; text-align: center; }
+  .form-note.ok { color: var(--green-700); }
+  .form-note.err { color: #d33; }
+  .contact-aside { background: var(--ink); color: #cbd4db; border-radius: var(--radius); padding: 1.8rem; }
+  .contact-aside h3 { color: #fff; }
+  .contact-item { display: flex; gap: .8rem; align-items: center; padding: .8rem 0; border-bottom: 1px solid rgba(255,255,255,.08); color: #cbd4db; }
+  .contact-item:hover { color: var(--green-400); }
+  .ci-icon { font-size: 1.4rem; }
+  .contact-item strong { color: #fff; }
+  .contact-social { display: flex; gap: 1rem; margin-top: 1.2rem; }
+  .contact-social a { color: var(--green-400); font-weight: 600; }
+</style>
+
+<script>
+  const form = document.getElementById('contact-form') as HTMLFormElement | null;
+  const note = document.getElementById('form-note');
+  form?.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const fd = new FormData(form);
+    if ((fd.get('botcheck') as string)) return; // honeypot
+    const name = (fd.get('name') as string || '').trim();
+    const phone = (fd.get('phone') as string || '').trim();
+    const email = (fd.get('email') as string || '').trim();
+    const message = (fd.get('message') as string || '').trim();
+    const key = form.dataset.key;
+    const wa = form.dataset.wa as string;
+
+    if (key) {
+      try {
+        if (note) { note.textContent = 'שולח…'; note.className = 'form-note'; }
+        const res = await fetch('https://api.web3forms.com/submit', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json', Accept: 'application/json' },
+          body: JSON.stringify(Object.fromEntries(fd.entries())),
+        });
+        const data = await res.json();
+        if (data.success) {
+          if (note) { note.textContent = 'תודה! קיבלתי את הפנייה ואחזור אליכם בהקדם 🙌'; note.className = 'form-note ok'; }
+          form.reset();
+          return;
+        }
+        throw new Error(data.message || 'failed');
+      } catch (err) {
+        if (note) { note.textContent = 'הייתה תקלה בשליחה — ממשיכים בוואטסאפ…'; note.className = 'form-note err'; }
+      }
+    }
+    // WhatsApp fallback (always reliable)
+    const text = `היי אלעד! שמי ${name}.%0aטלפון: ${phone}${email ? '%0aאימייל: ' + email : ''}${message ? '%0a' + message : ''}`;
+    window.open(`${wa}?text=${text}`, '_blank');
+    if (note) { note.textContent = 'נפתח חלון וואטסאפ לשליחת ההודעה 💬'; note.className = 'form-note ok'; }
+  });
+</script>

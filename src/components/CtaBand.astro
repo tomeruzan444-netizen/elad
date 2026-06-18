@@ -1,0 +1,40 @@
+---
+import { site } from '../data/site';
+export interface Props { title?: string; text?: string; }
+const {
+  title = 'מוכנים לקחת את העסק שלכם קדימה?',
+  text = 'בשיחת ייעוץ קצרה נבין יחד איפה אתם היום, מה מעכב ומה הצעד הבא הנכון. בלי התחייבות.',
+} = Astro.props;
+---
+<section class="cta-band">
+  <div class="container cta-inner">
+    <div class="cta-text">
+      <h2>{title}</h2>
+      <p>{text}</p>
+    </div>
+    <div class="cta-actions">
+      <a href="/צרו-קשר/" class="btn btn-primary btn-lg">לשיחת ייעוץ חינם</a>
+      <a href={`tel:${site.phoneRaw}`} class="btn btn-ghost btn-lg">{site.phone}</a>
+    </div>
+  </div>
+</section>
+
+<style>
+  .cta-band {
+    background: linear-gradient(135deg, var(--green-500), var(--green-700));
+    color: #fff; border-radius: var(--radius); margin: 3rem 0;
+    position: relative; overflow: hidden;
+  }
+  .cta-band::after {
+    content: ''; position: absolute; inset-block: -40%; inset-inline-end: -10%;
+    width: 380px; background: radial-gradient(circle, rgba(255,255,255,.18), transparent 70%);
+  }
+  .cta-inner { display: flex; align-items: center; justify-content: space-between; gap: 2rem; padding: 2.5rem; flex-wrap: wrap; position: relative; z-index: 1; }
+  .cta-text h2 { color: #fff; margin: 0 0 .4rem; }
+  .cta-text p { margin: 0; color: rgba(255,255,255,.92); max-width: 48ch; }
+  .cta-actions { display: flex; gap: .8rem; flex-wrap: wrap; }
+  .cta-band .btn-ghost { background: rgba(255,255,255,.12); color: #fff; border-color: rgba(255,255,255,.4); }
+  .cta-band .btn-ghost:hover { background: rgba(255,255,255,.2); color: #fff; }
+  .cta-band .btn-primary { background: #fff; color: var(--green-700); }
+  .cta-band .btn-primary:hover { background: var(--ink); color: #fff; }
+</style>

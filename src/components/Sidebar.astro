@@ -1,0 +1,84 @@
+---
+import { site, serviceGroups, industries, byGroup, label } from '../data/site';
+export interface Props {
+  variant: 'service' | 'industry' | 'post' | 'blog-index';
+  currentSlug?: string;
+}
+const { variant, currentSlug } = Astro.props;
+
+const posts = byGroup('post');
+const isCurrent = (slug: string) => slug === currentSlug;
+---
+<aside class="sidebar" aria-label="ניווט משני">
+  <!-- Lead box (always) -->
+  <div class="side-card side-lead">
+    <span class="side-eyebrow">מוכנים להתקדם?</span>
+    <h3 class="side-lead-title">בואו נדבר על העסק שלכם</h3>
+    <p>שיחת ייעוץ ראשונית ללא עלות — נבין יחד איפה אתם ומה הצעד הבא.</p>
+    <a href="/צרו-קשר/" class="btn btn-primary" style="width:100%;justify-content:center">לשיחת ייעוץ חינם</a>
+    <a href={site.whatsapp} target="_blank" rel="noopener" class="side-wa">💬 או שלחו לי וואטסאפ</a>
+  </div>
+
+  {(variant === 'industry') && (
+    <nav class="side-card" aria-label="ייעוץ עסקי לפי תחום">
+      <h3 class="side-title">ייעוץ עסקי לפי תחום</h3>
+      <ul class="side-links">
+        {industries.map((i) => (
+          <li><a href={`/${i.slug}/`} class={isCurrent(i.slug) ? 'active' : ''}>{i.label}</a></li>
+        ))}
+      </ul>
+    </nav>
+  )}
+
+  {(variant === 'service' || variant === 'blog-index') && serviceGroups.map((g) => (
+    <nav class="side-card" aria-label={g.title}>
+      <h3 class="side-title">{g.title}</h3>
+      <ul class="side-links">
+        {g.slugs.map((s) => (
+          <li><a href={`/${s}/`} class={isCurrent(s) ? 'active' : ''}>{label(s)}</a></li>
+        ))}
+      </ul>
+    </nav>
+  ))}
+
+  {(variant === 'post' || variant === 'service') && (
+    <nav class="side-card" aria-label="מהבלוג">
+      <h3 class="side-title">מהבלוג</h3>
+      <ul class="side-links side-posts">
+        {posts.slice(0, 6).map((p) => (
+          <li><a href={`/${p.slug}/`} class={isCurrent(p.slug) ? 'active' : ''}>{(p.title || '').split('|')[0].split(' - ')[0].trim()}</a></li>
+        ))}
+      </ul>
+      <a href="/info-articles/" class="side-all">לכל המאמרים ←</a>
+    </nav>
+  )}
+
+  {(variant === 'industry') && (
+    <nav class="side-card" aria-label="שירותים מובילים">
+      <h3 class="side-title">שירותים מובילים</h3>
+      <ul class="side-links">
+        {serviceGroups[1].slugs.slice(0, 6).map((s) => (
+          <li><a href={`/${s}/`}>{label(s)}</a></li>
+        ))}
+      </ul>
+    </nav>
+  )}
+</aside>
+
+<style>
+  .sidebar { display: flex; flex-direction: column; gap: 1.25rem; position: sticky; top: 96px; }
+  .side-card { background: #fff; border: 1px solid var(--border); border-radius: var(--radius); padding: 1.4rem; box-shadow: var(--shadow-sm); }
+  .side-lead { background: linear-gradient(160deg, var(--ink), #1c2730); color: #cbd4db; border: none; }
+  .side-eyebrow { color: var(--green-400); font-weight: 700; font-size: .8rem; text-transform: uppercase; letter-spacing: .06em; }
+  .side-lead-title { color: #fff; margin: .4rem 0 .5rem; font-size: 1.3rem; }
+  .side-lead p { font-size: .95rem; color: #aeb8c0; margin-bottom: 1.1rem; }
+  .side-wa { display: block; text-align: center; margin-top: .7rem; color: #cbd4db; font-size: .9rem; }
+  .side-wa:hover { color: var(--green-400); }
+  .side-title { font-size: 1.05rem; margin-bottom: .9rem; padding-bottom: .6rem; border-bottom: 2px solid var(--green-100, var(--green-50)); }
+  .side-links { list-style: none; margin: 0; padding: 0; }
+  .side-links li { margin: 0; }
+  .side-links a { display: block; padding: .5rem .65rem; border-radius: 8px; font-size: .94rem; color: var(--slate-700); transition: all var(--transition); }
+  .side-links a:hover { background: var(--green-50); color: var(--green-700); padding-inline-start: 1rem; }
+  .side-links a.active { background: var(--green-50); color: var(--green-700); font-weight: 700; border-inline-start: 3px solid var(--green-500); }
+  .side-all { display: inline-block; margin-top: .8rem; font-weight: 700; color: var(--green-700); font-size: .92rem; }
+</style>

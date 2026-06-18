@@ -1,0 +1,73 @@
+---
+import ArticleLayout from '../layouts/ArticleLayout.astro';
+import BaseLayout from '../layouts/BaseLayout.astro';
+import BlogList from '../components/BlogList.astro';
+import ContactForm from '../components/ContactForm.astro';
+import Sidebar from '../components/Sidebar.astro';
+import CtaBand from '../components/CtaBand.astro';
+import { pages } from '../data/site';
+import { buildJsonLd } from '../lib/content';
+import type { Doc } from '../data/site';
+
+export function getStaticPaths() {
+  return pages
+    .filter((p) => p.group !== 'home')
+    .map((p) => ({ params: { slug: p.slug }, props: { doc: p } }));
+}
+
+const { doc } = Astro.props as { doc: Doc };
+const isBlogIndex = doc.group === 'blog-index';
+const isContact = doc.slug === 'צרו-קשר';
+const jsonLd = buildJsonLd(doc);
+---
+{isBlogIndex && (
+  <BaseLayout
+    title={doc.title}
+    description={doc.meta_description}
+    canonical={`https://elad-digital.co.il/${doc.slug}/`}
+    ogImage={doc.og_image_local || doc.og_image}
+    jsonLd={jsonLd}
+  >
+    <section class="page-hero">
+      <div class="container">
+        <span class="eyebrow">הבלוג העסקי</span>
+        <h1>מידע מקצועי וטיפים לשיווק והצלחה עסקית</h1>
+        <p class="lead">{doc.meta_description}</p>
+      </div>
+    </section>
+    <div class="container blog-layout">
+      <div><BlogList /></div>
+      <Sidebar variant="blog-index" currentSlug={doc.slug} />
+    </div>
+    <div class="container"><CtaBand /></div>
+  </BaseLayout>
+)}
+
+{isContact && (
+  <BaseLayout
+    title={doc.title}
+    description={doc.meta_description}
+    canonical={`https://elad-digital.co.il/${doc.slug}/`}
+    jsonLd={jsonLd}
+  >
+    <section class="page-hero">
+      <div class="container">
+        <span class="eyebrow">דברו איתי</span>
+        <h1>בואו נתחיל לדבר על העסק שלכם</h1>
+        <p class="lead">השאירו פרטים ואחזור אליכם בהקדם, או שתפסו אותי ישירות בטלפון ובוואטסאפ.</p>
+      </div>
+    </section>
+    <div class="container" style="padding-block:3rem">
+      <ContactForm />
+    </div>
+  </BaseLayout>
+)}
+
+{!isBlogIndex && !isContact && <ArticleLayout doc={doc} />}
+
+<style>
+  .blog-layout { display: grid; grid-template-columns: minmax(0,1fr) 320px; gap: clamp(1.5rem,1rem+2vw,3rem); padding-block: 3rem; align-items: start; }
+  @media (max-width: 980px) { .blog-layout { grid-template-columns: 1fr; } }
+  .page-hero { background: linear-gradient(180deg, var(--green-50), #fff); padding-block: clamp(2rem,1rem+4vw,3.5rem) clamp(1.5rem,1rem+2vw,2.5rem); border-bottom: 1px solid var(--border); }
+  .page-hero .lead { max-width: 60ch; }
+</style>

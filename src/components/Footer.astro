@@ -1,0 +1,90 @@
+---
+import { site, serviceGroups, industries, label } from '../data/site';
+const year = new Date().getFullYear();
+const topIndustries = industries.slice(0, 10);
+---
+<footer class="site-footer">
+  <div class="container footer-top">
+    <div class="footer-brand">
+      <img src={site.logoLight} alt={site.name} width="160" height="48" />
+      <p class="footer-about">
+        ליווי, ייעוץ ופיתוח עסקי עם דגש על שיווק דיגיטלי. אני עוזר לבעלי עסקים לבנות
+        אסטרטגיה, להגדיל מכירות ולצמוח בצורה חכמה ויציבה.
+      </p>
+      <div class="footer-social" aria-label="רשתות חברתיות">
+        <a href={site.social.facebook} aria-label="פייסבוק" rel="noopener" target="_blank">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M14 9h3V6h-3c-2.2 0-4 1.8-4 4v2H7v3h3v6h3v-6h3l1-3h-4v-2c0-.6.4-1 1-1z"/></svg>
+        </a>
+        <a href={site.social.instagram} aria-label="אינסטגרם" rel="noopener" target="_blank">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><rect x="3" y="3" width="18" height="18" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.5" cy="6.5" r="1" fill="currentColor" stroke="none"/></svg>
+        </a>
+      </div>
+    </div>
+
+    <div class="footer-col">
+      <h3>שירותים</h3>
+      <ul>
+        {serviceGroups[0].slugs.slice(0, 6).map((s) => (<li><a href={`/${s}/`}>{label(s)}</a></li>))}
+      </ul>
+    </div>
+
+    <div class="footer-col">
+      <h3>שיווק דיגיטלי</h3>
+      <ul>
+        {serviceGroups[1].slugs.slice(0, 6).map((s) => (<li><a href={`/${s}/`}>{label(s)}</a></li>))}
+      </ul>
+    </div>
+
+    <div class="footer-col">
+      <h3>ייעוץ לפי תחום</h3>
+      <ul>
+        {topIndustries.map((i) => (<li><a href={`/${i.slug}/`}>{i.label}</a></li>))}
+      </ul>
+    </div>
+
+    <div class="footer-col footer-contact">
+      <h3>צרו קשר</h3>
+      <a href={`tel:${site.phoneRaw}`} class="contact-line">📞 {site.phone}</a>
+      <a href={site.whatsapp} class="contact-line" target="_blank" rel="noopener">💬 וואטסאפ</a>
+      <a href="/צרו-קשר/" class="btn btn-primary" style="margin-top:.8rem">דברו איתי</a>
+    </div>
+  </div>
+
+  <div class="footer-bottom">
+    <div class="container footer-bottom-inner">
+      <p>© {year} {site.name} · כל הזכויות שמורות</p>
+      <nav class="footer-legal" aria-label="עמודי מדיניות">
+        <a href="/אודות/">אודות</a>
+        <a href="/info-articles/">בלוג</a>
+        <a href="/תנאי-שימוש/">תנאי שימוש</a>
+        <a href="/מדיניות-פרטיות/">מדיניות פרטיות</a>
+        <a href="/הצהרת-נגישות/">הצהרת נגישות</a>
+      </nav>
+    </div>
+  </div>
+</footer>
+
+<style>
+  .site-footer { background: var(--ink); color: #aeb8c0; margin-top: 4rem; }
+  .footer-top { display: grid; grid-template-columns: 1.6fr 1fr 1fr 1fr 1fr; gap: 2.5rem; padding-block: 3.5rem 2.5rem; }
+  .footer-brand img { height: 46px; width: auto; margin-bottom: 1rem; }
+  .footer-about { font-size: .95rem; line-height: 1.7; color: #9aa6af; max-width: 32ch; }
+  .footer-social { display: flex; gap: .6rem; margin-top: 1rem; }
+  .footer-social a { display: grid; place-items: center; width: 40px; height: 40px; border-radius: 50%; background: rgba(255,255,255,.08); color: #fff; transition: all var(--transition); }
+  .footer-social a:hover { background: var(--green-500); transform: translateY(-2px); }
+  .footer-col h3 { color: #fff; font-size: 1rem; margin-bottom: 1rem; }
+  .footer-col ul { list-style: none; margin: 0; padding: 0; }
+  .footer-col li { margin-bottom: .55rem; }
+  .footer-col a { color: #9aa6af; font-size: .92rem; }
+  .footer-col a:hover { color: var(--green-400); }
+  .contact-line { display: block; color: #cbd4db; margin-bottom: .6rem; font-weight: 600; }
+  .contact-line:hover { color: var(--green-400); }
+  .footer-bottom { border-top: 1px solid rgba(255,255,255,.08); }
+  .footer-bottom-inner { display: flex; justify-content: space-between; align-items: center; gap: 1rem; padding-block: 1.25rem; flex-wrap: wrap; }
+  .footer-bottom p { margin: 0; font-size: .85rem; color: #7e8a93; }
+  .footer-legal { display: flex; gap: 1.25rem; flex-wrap: wrap; }
+  .footer-legal a { color: #7e8a93; font-size: .85rem; }
+  .footer-legal a:hover { color: var(--green-400); }
+  @media (max-width: 980px) { .footer-top { grid-template-columns: 1fr 1fr; gap: 2rem; } }
+  @media (max-width: 560px) { .footer-top { grid-template-columns: 1fr; } }
+</style>

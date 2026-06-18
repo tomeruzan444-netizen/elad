@@ -1,0 +1,22 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import { industries, serviceGroups, label } from '../data/site';
+---
+<BaseLayout title="הדף לא נמצא (404) | אלעד שורתי" description="הדף שחיפשתם לא נמצא" robots="noindex,follow">
+  <section class="section text-center">
+    <div class="container-narrow">
+      <span class="eyebrow">שגיאה 404</span>
+      <h1>אופס, הדף הזה לא נמצא</h1>
+      <p class="lead">יכול להיות שהקישור התיישן. הנה כמה דרכים לחזור למסלול:</p>
+      <div class="hero-actions" style="justify-content:center;display:flex;gap:.8rem;flex-wrap:wrap;margin:1.5rem 0">
+        <a href="/" class="btn btn-primary btn-lg">חזרה לדף הבית</a>
+        <a href="/צרו-קשר/" class="btn btn-ghost btn-lg">דברו איתי</a>
+      </div>
+      <div class="grid grid-3" style="margin-top:2.5rem;text-align:start">
+        {serviceGroups[1].slugs.slice(0,6).map((s) => (
+          <a href={`/${s}/`} class="card">{label(s)}</a>
+        ))}
+      </div>
+    </div>
+  </section>
+</BaseLayout>
