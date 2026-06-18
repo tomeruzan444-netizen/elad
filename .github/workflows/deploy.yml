@@ -46,8 +46,6 @@ jobs:
           local-dir: ./dist/
           # FTP login already lands inside the site's web root, so deploy to the root.
           server-dir: ./
-          # One-time full wipe + fresh upload to fix partial/encoding state.
-          dangerous-clean-slate: true
           # Only changed files are uploaded (state tracked in .ftp-deploy-sync-state.json)
           exclude: |
             **/.git*
