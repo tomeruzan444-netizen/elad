@@ -40,8 +40,9 @@ jobs:
           server: ${{ secrets.FTP_SERVER }}
           username: ${{ secrets.FTP_USERNAME }}
           password: ${{ secrets.FTP_PASSWORD }}
-          protocol: ftps
+          protocol: ftp
           port: 21
+          timeout: 60000
           local-dir: ./dist/
           server-dir: ${{ vars.FTP_REMOTE_DIR || 'public_html/' }}
           # Only changed files are uploaded (state tracked in .ftp-deploy-sync-state.json)
