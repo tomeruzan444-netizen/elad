@@ -44,7 +44,8 @@ jobs:
           port: 21
           timeout: 60000
           local-dir: ./dist/
-          server-dir: ${{ vars.FTP_REMOTE_DIR || 'public_html/' }}
+          # FTP login already lands inside the site's web root, so deploy to the root.
+          server-dir: ./
           # Only changed files are uploaded (state tracked in .ftp-deploy-sync-state.json)
           exclude: |
             **/.git*
